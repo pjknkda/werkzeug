@@ -882,8 +882,8 @@ def _make_chunk_iter(stream, limit, buffer_size):
         yield item
 
 
-def make_line_iter(stream, limit=None, buffer_size=10 * 1024,
-                   cap_at_buffer=False):
+def make_line_iter_py(stream, limit=None, buffer_size=10 * 1024,
+                      cap_at_buffer=False):
     """Safely iterates line-based over an input stream.  If the input stream
     is not a :class:`LimitedStream` the `limit` parameter is mandatory.
 
@@ -966,6 +966,13 @@ def make_line_iter(stream, limit=None, buffer_size=10 * 1024,
         previous = item
     if previous:
         yield previous
+
+
+try:
+    import werkzeug._wsgi as _wsgi
+    make_line_iter = _wsgi.make_line_iter
+except ImportError:
+    make_line_iter = make_line_iter_py
 
 
 def make_chunk_iter(stream, separator, limit=None, buffer_size=10 * 1024,

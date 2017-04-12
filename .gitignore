@@ -4,6 +4,7 @@ dist
 *.egg-info
 *.pyc
 *.pyo
+*.so
 env
 .DS_Store
 .tox
@@ -16,3 +17,5 @@ coverage_out
 .xprocess
 htmlcov
 .hypothesis
+werkzeug/_formparser.c
+werkzeug/_wsgi.c

@@ -55,11 +55,17 @@ repository from `github`_::
 """
 import ast
 import re
-try:
-    from setuptools import setup, Command
-except ImportError:
-    from distutils.core import setup, Command
 
+try:
+    from setuptools import setup, Command, Extension
+except ImportError:
+    from distutils.core import setup, Command, Extension
+
+try:
+    from Cython.Build import cythonize
+    USE_CYTHON = True
+except ImportError:
+    USE_CYTHON = False
 
 _version_re = re.compile(r'__version__\s+=\s+(.*)')
 
@@ -81,6 +87,10 @@ class TestCommand(Command):
         import pytest
         pytest.cmdline.main(args=[])
 
+extensions = []
+if USE_CYTHON:
+    extensions = cythonize([Extension('werkzeug._wsgi', ['werkzeug/_wsgi.pyx']),
+                            Extension('werkzeug._formparser', ['werkzeug/_formparser.pyx'])])
 
 setup(
     name='Werkzeug',
@@ -110,9 +120,11 @@ setup(
     ],
     packages=['werkzeug', 'werkzeug.debug', 'werkzeug.contrib'],
     extras_require={
+        'cython': ['cython'],
         'watchdog': ['watchdog'],
         'termcolor': ['termcolor'],
     },
+    ext_modules=extensions,
     cmdclass=dict(test=TestCommand),
     include_package_data=True,
     zip_safe=False,

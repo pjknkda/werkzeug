@@ -48,7 +48,7 @@ before_install:
     - python --version
 
 install:
-    - pip install tox flake8
+    - pip install cython tox flake8
 
 script:
     - tox -e py-$TOXENV_SUFFIX
